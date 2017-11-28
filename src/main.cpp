@@ -30,11 +30,11 @@ struct FontObj {
 
 };
 
-FontObj generateFont(int screenWidth, int screenHeight, const char* text);
+FontObj* generateFont(int screenWidth, int screenHeight, const char* text);
 std::vector<const char *> fontFilenames;
 std::random_device rd;
 std::mt19937 rng(rd());
-list<FontObj> fontObjs;
+std::vector<FontObj*> fontObjs;
 std::vector<Font*> fonts;
 int fontFilesAmount;
 int main() {
@@ -102,19 +102,17 @@ int main() {
 		lgfx_clearcolorbuffer(0, 0, 0);
 		for (auto obj = fontObjs.begin(); obj != fontObjs.end();)
 		{   
-			lgfx_setcolor((*obj).r, (*obj).g, (*obj).b, 1);			
-			(*obj).font->draw((*obj).text, Vec2((*obj).xPos, (*obj).yPos));
-			(*obj).xPos -= (*obj).speed * deltaTime;
-			if ((*obj).xPos < ((*obj).textWidth * -1)) {
-				//cout << "GOT OUT!";
+			lgfx_setcolor((*obj)->r, (*obj)->g, (*obj)->b, 1);			
+			(*obj)->font->draw((*obj)->text, Vec2((*obj)->xPos, (*obj)->yPos));
+			(*obj)->xPos -= (*obj)->speed * deltaTime;
+			if ((*obj)->xPos < ((*obj)->textWidth * -1)) {
+				delete(*obj);
 				obj = fontObjs.erase(obj);
 			}
 			else {
 				++obj;
-			}			
-			
-		}
-		
+			}						
+		}		
 		// Actualizamos ventana y eventos
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -122,36 +120,46 @@ int main() {
 
 	}
 
+	for (auto obj = fontObjs.begin(); obj != fontObjs.end();) {
+		delete(*obj);
+		obj = fontObjs.erase(obj);
+	}
+	fontObjs.clear();
+	for (auto obj = fonts.begin(); obj != fonts.end();) {
+		delete(*obj);
+		obj = fonts.erase(obj);
+	}
+	fonts.clear();
 	return 0;
 }
 
-FontObj generateFont(int screenWidth, int screenHeight, const char* text) {
-	FontObj obj;
-	obj.text = text;
+FontObj* generateFont(int screenWidth, int screenHeight, const char* text) {
+	FontObj *obj = new FontObj();
+	obj->text = text;
 
 	std::uniform_int_distribution<int> fon(0, fontFilesAmount-1);
 	int randFont = fon(rng);
-	obj.font = fonts.at(randFont);
+	obj->font = fonts.at(randFont);
 
-	Vec2 textSize = obj.font->getTextSize(text);
-	obj.textWidth = textSize.x;
-	obj.textHeight = textSize.y;
+	Vec2 textSize = obj->font->getTextSize(text);
+	obj->textWidth = textSize.x;
+	obj->textHeight = textSize.y;
 
 	std::uniform_int_distribution<int> spd(20, 200);
 	int speed = spd(rng);
-	obj.speed = speed;
-	obj.xPos = screenWidth;
+	obj->speed = speed;
+	obj->xPos = screenWidth;
 
 	std::uniform_int_distribution<int> uni(0, screenHeight);
 	int randY = uni(rng);
-	obj.yPos = static_cast<float>(randY);
+	obj->yPos = static_cast<float>(randY);
 
 	float randomR = (float)rand() / (float)(RAND_MAX / 1);
-	obj.r = randomR;
+	obj->r = randomR;
 	float randomG = (float)rand() / (float)(RAND_MAX / 1);
-	obj.g = randomG;
+	obj->g = randomG;
 	float randomB = (float)rand() / (float)(RAND_MAX / 1);
-	obj.b = randomB;
+	obj->b = randomB;
 	return obj;
 
 

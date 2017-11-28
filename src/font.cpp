@@ -97,5 +97,8 @@ float Font::getHeight() const {
 	return height;
 }
 Font::Font() {}
-Font::~Font() {}
+Font::~Font() {
+	ltex_free(texture);
+	charData.clear();
+}
 

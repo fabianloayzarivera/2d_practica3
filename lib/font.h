@@ -7,7 +7,6 @@
 class Font {
 private:
 	Font();
-	~Font();
 	float height;
 	int textureHeight;
 	int textureWidth;
@@ -20,5 +19,5 @@ public:
 	Vec2 getTextSize(const char* text) const;
 	void draw(const char* text, const Vec2& pos) const;
 	ltex_t* getTexture();
-
+	~Font();
 };
