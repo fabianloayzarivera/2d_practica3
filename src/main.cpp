@@ -75,12 +75,10 @@ int main() {
 	std::uniform_int_distribution<int> frand(0, fontFilesAmount -1);
 	for (int i = 0; i < fontFilesAmount; i++) {
 		int randSize = uni(rng);
-		int randFont = frand(rng);
-		//const char* file = fontFilenames.at(randFont);
 		const char* file = fontFilenames.at(i);
 		fonts.push_back(Font::load(file, static_cast<float>(randSize)));
 	}
-	const char* text = "Hello World!";
+	const char* text = "Hello, World!";
 	double lastTime = glfwGetTime();
 	while (!glfwWindowShouldClose(window) && !glfwGetKey(window, GLFW_KEY_ESCAPE)) {
 		// Actualizamos delta
@@ -113,13 +111,10 @@ int main() {
 				++obj;
 			}						
 		}		
-		cout << "Size: " << (fontObjs.size()) << endl;
-
+		
 		// Actualizamos ventana y eventos
 		glfwSwapBuffers(window);
 		glfwPollEvents();
-
-
 	}
 
 	for (auto obj = fontObjs.begin(); obj != fontObjs.end();) {
@@ -145,7 +140,7 @@ FontObj generateFont(int screenWidth, int screenHeight, const char* text) {
 
 	Vec2 textSize = obj->font->getTextSize(text);
 	obj->textWidth = textSize.x;
-	obj->textHeight = textSize.y;
+ 	obj->textHeight = textSize.y;
 
 	std::uniform_int_distribution<int> spd(20, 200);
 	int speed = spd(rng);
@@ -156,6 +151,10 @@ FontObj generateFont(int screenWidth, int screenHeight, const char* text) {
 	int randY = uni(rng);
 	obj->yPos = static_cast<float>(randY);
 
+	int yPainted = obj->yPos - textSize.y;
+	if (yPainted < 0) {
+		obj->yPos = obj->yPos + abs(yPainted) + 5; //So it doesn't look exactly painted on y = 0
+	}
 	float randomR = (float)rand() / (float)(RAND_MAX / 1);
 	obj->r = randomR;
 	float randomG = (float)rand() / (float)(RAND_MAX / 1);

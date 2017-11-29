@@ -76,7 +76,7 @@ Vec2 Font::getTextSize(const char* text) const {
 	for (int i = 0; i < strlen(text); i++) {
 		int carIndex = text[i] - 32;
 		stbtt_GetBakedQuad(charData.data(), textureWidth, textureHeight, carIndex, &xPos, &yPos, aligned_quad, true);
-		//textWidth += (aligned_quad->x1 - aligned_quad->x0);
+
 		if (i == strlen(text) - 1) {
 			textWidth = aligned_quad->x1;
 		}
