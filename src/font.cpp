@@ -64,7 +64,7 @@ void Font::draw(const char* text, const Vec2& pos) const {
 		stbtt_GetBakedQuad(charData.data(), textureWidth, textureHeight, carIndex, &xPos, &yPos, aligned_quad, true);
 		ltex_drawrotsized(texture, aligned_quad->x0, aligned_quad->y0, 0, 0, 0, (aligned_quad->x1 - aligned_quad->x0), (aligned_quad->y1 - aligned_quad->y0), aligned_quad->s0, aligned_quad->t0, aligned_quad->s1, aligned_quad->t1);
 	}
-
+	delete(aligned_quad);
 }
 
 Vec2 Font::getTextSize(const char* text) const {
@@ -85,7 +85,7 @@ Vec2 Font::getTextSize(const char* text) const {
 			textHeight = letterHeight;
 		}
 	}
-
+	delete(aligned_quad);
 	return Vec2(textWidth, textHeight);
 
 }

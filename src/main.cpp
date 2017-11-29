@@ -30,11 +30,11 @@ struct FontObj {
 
 };
 
-FontObj* generateFont(int screenWidth, int screenHeight, const char* text);
+FontObj generateFont(int screenWidth, int screenHeight, const char* text);
 std::vector<const char *> fontFilenames;
 std::random_device rd;
 std::mt19937 rng(rd());
-std::vector<FontObj*> fontObjs;
+std::vector<FontObj> fontObjs;
 std::vector<Font*> fonts;
 int fontFilesAmount;
 int main() {
@@ -102,17 +102,19 @@ int main() {
 		lgfx_clearcolorbuffer(0, 0, 0);
 		for (auto obj = fontObjs.begin(); obj != fontObjs.end();)
 		{   
-			lgfx_setcolor((*obj)->r, (*obj)->g, (*obj)->b, 1);			
-			(*obj)->font->draw((*obj)->text, Vec2((*obj)->xPos, (*obj)->yPos));
-			(*obj)->xPos -= (*obj)->speed * deltaTime;
-			if ((*obj)->xPos < ((*obj)->textWidth * -1)) {
-				delete(*obj);
+			lgfx_setcolor((*obj).r, (*obj).g, (*obj).b, 1);			
+			(*obj).font->draw((*obj).text, Vec2((*obj).xPos, (*obj).yPos));
+			(*obj).xPos -= (*obj).speed * deltaTime;
+			if ((*obj).xPos < ((*obj).textWidth * -1)) {
+				//delete(obj);
 				obj = fontObjs.erase(obj);
 			}
 			else {
 				++obj;
 			}						
 		}		
+		cout << "Size: " << (fontObjs.size()) << endl;
+
 		// Actualizamos ventana y eventos
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -121,7 +123,7 @@ int main() {
 	}
 
 	for (auto obj = fontObjs.begin(); obj != fontObjs.end();) {
-		delete(*obj);
+		//delete(*obj);
 		obj = fontObjs.erase(obj);
 	}
 	fontObjs.clear();
@@ -133,7 +135,7 @@ int main() {
 	return 0;
 }
 
-FontObj* generateFont(int screenWidth, int screenHeight, const char* text) {
+FontObj generateFont(int screenWidth, int screenHeight, const char* text) {
 	FontObj *obj = new FontObj();
 	obj->text = text;
 
@@ -160,7 +162,7 @@ FontObj* generateFont(int screenWidth, int screenHeight, const char* text) {
 	obj->g = randomG;
 	float randomB = (float)rand() / (float)(RAND_MAX / 1);
 	obj->b = randomB;
-	return obj;
+	return *obj;
 
 
 }
